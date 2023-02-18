@@ -1,0 +1,6 @@
+{:paths ["src" "resources" "dev" "target"]
+ :deps {org.clojure/clojure {:mvn/version "1.11.1"}
+
+        
+        cider/cider-nrepl {:mvn/version "0.30.0"}
+        cider/piggieback  {:mvn/version "0.5.3"}}}
