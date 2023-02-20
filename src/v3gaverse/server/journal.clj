@@ -8,6 +8,7 @@
   (:import (com.zaxxer.hikari HikariDataSource)))
 
 
+
 ;; DONE: Add database
 ;; DONE: Look into DB pool but don't add it yet
 ;; TODO: bring over full CRUD for iota only
@@ -19,10 +20,12 @@
 ;; Posts, Iota and Notes
 
 
+
 (def db-spec {:dbtype   "postgresql"
               :dbname   "saga"
               :user "v3ga"
               :password "orchidok"})
+
 
 (def datasource (jdbc/get-datasource db-spec))
 
@@ -62,12 +65,31 @@
                      :title :post :created_at :format :last_viewed
                      [[title post created-at format last-viewed]]))
 
+
 (defn create-iota! [{:keys [post]}]
   (create-post {:type :iota :post post}))
 
-(defn create-note [{:keys [id title post created-at format last-viewed]}]
-  (create-post {:type :note :id id :title title :post post :created-at created-at :format format :last-viewed last-viewed}))
+#_(defn create-note [{:keys [id title post created-at format last-viewed]}]
+    (create-post {:type :note
+                  :id id :title title :post post
+                  :created-at created-at :format format :last-viewed last-viewed}))
 
+;; -- Read -------------------------------
+;; (defmulti find-post :type)
+
+;; -- 
+(defn find-iota [id]
+  (-> (hh/select :*)
+      (hh/from :iota)
+      (hh/where := :id id)))
+
+;; -- Update
+(defn update-iota [{:keys [id post]}]
+  (let [id id
+        post post]
+    (-> (hh/update :iota)
+        (hh/set {:post  post})
+        (hh/where := :id id))))
 
 
 
@@ -93,13 +115,24 @@
 
 
 
-(query! (create-iota! {:post "this works now, good"}))
+(query! (create-post {:type :iota :post "this works now, good too"}))
+(query-one! (find-iota 1))
+(query-one! (update-iota {:id 1 :post "will it update? again?"}))
 
-(def insert-iota
-  {:name ::insert-iota
-   :enter (fn [ctx]
-            (let [id 1
-                  post (-> ctx :request :json-params :post)
-                  new-iota (create-iota id post)]
-              (insert-iota! db/datasource new-iota)
-              (created-response ctx new-iota)))})
+
+
+
+
+#_(def insert-iota
+    {:name ::insert-iota
+     :enter (fn [ctx]
+              (let [id 1
+                    post (-> ctx :request :json-params :post)
+                    new-iota (create-iota id post)]
+                (insert-iota! db/datasource new-iota)
+                (created-response ctx new-iota)))})
+
+
+
+
+
