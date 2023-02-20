@@ -91,6 +91,10 @@
         (hh/set {:post  post})
         (hh/where := :id id))))
 
+;; -- Delete -----------------------------
+(defn delete-iota [{:keys  [id]}]
+  (-> (hh/delete-from :iota)
+      (hh/where := :id id)))
 
 
 (defn db-query [sql]
@@ -118,7 +122,7 @@
 (query! (create-post {:type :iota :post "this works now, good too"}))
 (query-one! (find-iota 1))
 (query-one! (update-iota {:id 1 :post "will it update? again?"}))
-
+(query-one! (delete-iota {:id 1}))
 
 
 
